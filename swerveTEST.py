@@ -1,6 +1,6 @@
-
 import pygame
 import random
+import sys 
 from os import path
 
 
@@ -29,6 +29,15 @@ pygame.mixer.init() #for the sound
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Swerve")
 clock = pygame.time.Clock()
+
+#Game Sounds
+hitsound = pygame.mixer.Sound('C:/Users/18622/Desktop/soundfolder/ses.wav')
+goversound = pygame.mixer.Sound('C:/Users/18622/Downloads/GameOver.wav')
+
+music = pygame.mixer.music.load('C:/Users/18622/Desktop/bgsong.mp3')
+pygame.mixer.music.play(loops=-1)
+
+
 
 score = 0
 gameLives = 3
@@ -95,12 +104,23 @@ class Player(pygame.sprite.Sprite): #Hero
         if keystate[pygame.K_DOWN]:
             self.speedy = 6
         self.rect.y += self.speedy
+        
         #player will not move outside the window box when moving up/down
         if self.rect.top < 0:
             self.rect.top = 0
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
 
+    def reset(self):
+        #self.rect.y = 0
+        #self.rect.x = random.randrange(0, WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-80,20)
+        self.speedy = random.randrange(1,2) 
+
+
+
+
+            
 
 
 
@@ -134,18 +154,16 @@ class Attacker(pygame.sprite.Sprite):
             self.rect.x = random.randrange(0, WIDTH - self.rect.width)
             self.rect.y = random.randrange(-100,-40)
             self.speedy = random.randrange(1,8)
+
+            
+                        
        # print(self.rect)
 
     def reset(self):
         #self.rect.y = 0
-        self.rect.x = random.randrange(0, WIDTH - self.rect.width)
+        #self.rect.x = random.randrange(0, WIDTH - self.rect.width)
         self.rect.y = random.randrange(-100,-40)
-        
-
-        
-            
-
-
+        self.speedy = random.randrange(1,3) 
 
         
 #Load all game graphics
@@ -154,11 +172,8 @@ background_rect = background.get_rect()
 player_img = pygame.image.load(path.join(img_dir, "cat3.png")).convert()
 attacker_img = pygame.image.load(path.join(img_dir, "fire1.png")).convert_alpha()
 
-#Load all game sounds
 
-
-
-
+# our group
 all_sprites = pygame.sprite.Group()
 #group to hold the attackers
 attackers = pygame.sprite.Group()
@@ -197,6 +212,9 @@ while running:
         if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                  running = False
+                 pygame.quit()
+                 print('escape')
+                 sys.exit()
                  if event.type == pygame.QUIT:
                      running = False
 
@@ -207,35 +225,49 @@ while running:
     #check to see if an attacker hits the player
     collisions = pygame.sprite.spritecollide(player, attackers, False, pygame.sprite.collide_circle)
     if collisions:
-        #print('collision')
+        #screen.blit(background, background_rect)
+
+        
+
         
         gameLives -= 1
 
         if gameLives >= 1:
             
-            pygame.draw.rect(screen, PURPLE, (210, 280, 320, 80))
+            pygame.draw.rect(screen, BLUE, (210, 280, 320, 80))
             draw_text(screen, 'You died! You have' + ' ' + str(gameLives) + ' ' + 'lives remaining', 20, 375, 300)
             draw_text(screen, 'The game will restart in' + ' ' + str(3) + ' ' + 'seconds', 20, 380, 320)
-
+            hitsound.play()
             for attacker in attackers:
                 attacker.reset()
-
+    
+        
         if gameLives < 1:
-                    pygame.draw.rect(screen, PURPLE, (210, 280, 320, 80))
+                    pygame.draw.rect(screen, GREEN, (210, 280, 320, 80))
                     draw_text(screen, 'Game over! You Lost!', 20, 375, 300)
+                    goversound.play()
+                    pygame.mixer.music.pause()
                     pygame.display.update()
                     pygame.time.wait(3000)
-                    pygame.quit()
-                
+                    #pygame.quit()
+
+        if score > topScore:
+            topScore = score
+        
+        #screen.blit(background, background_rect)
+        #all_sprites.draw(screen)
+        draw_text(screen, 'Score:' + ' ' + str(score), 18, WIDTH / 20, 8)
+        draw_text(screen, 'Top Score:' + ' ' +str(topScore), 18, WIDTH / 17, 30)
+        draw_text(screen, 'Lives:' + ' ' +str(gameLives), 18, WIDTH / 25, 50)
+
         pygame.display.update()
         pygame.time.wait(3000)
+        pygame.event.clear()
 
         
         
-        if score > topScore:
-            topScore = score
-            #if topScore == score:
-                #gameLives -= 1
+        #if score > topScore:
+            #topScore = score
 
           
         
@@ -247,6 +279,7 @@ while running:
     draw_text(screen, 'Score:' + ' ' + str(score), 18, WIDTH / 20, 8)
     draw_text(screen, 'Top Score:' + ' ' +str(topScore), 18, WIDTH / 17, 30)
     draw_text(screen, 'Lives:' + ' ' +str(gameLives), 18, WIDTH / 25, 50)
+    
     
 
     
