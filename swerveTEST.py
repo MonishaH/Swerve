@@ -1,3 +1,4 @@
+# FOR KAREN 
 import pygame
 import random
 import sys 
@@ -31,7 +32,8 @@ pygame.display.set_caption("Swerve")
 clock = pygame.time.Clock()
 
 #Game Sounds
-hitsound = pygame.mixer.Sound('C:/Users/18622/Desktop/soundfolder/ses.wav')
+#hitsound = pygame.mixer.Sound('C:/Users/18622/Desktop/soundfolder/ses.wav')
+hitsound = pygame.mixer.Sound('C:/Users/18622/Downloads/Cat Yelling In Fear-SoundBible.com-455973055.wav')
 goversound = pygame.mixer.Sound('C:/Users/18622/Downloads/GameOver.wav')
 
 music = pygame.mixer.music.load('C:/Users/18622/Desktop/bgsong.mp3')
@@ -111,20 +113,14 @@ class Player(pygame.sprite.Sprite): #Hero
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
 
-    def reset(self):
+    def resett(self):
         #self.rect.y = 0
         #self.rect.x = random.randrange(0, WIDTH - self.rect.width)
         self.rect.y = random.randrange(-80,20)
         self.speedy = random.randrange(1,2) 
 
 
-
-
-            
-
-
-
-        
+  
             
         # --- Making the Attackers + Movements ---
 
@@ -155,22 +151,56 @@ class Attacker(pygame.sprite.Sprite):
             self.rect.y = random.randrange(-100,-40)
             self.speedy = random.randrange(1,8)
 
-            
-                        
-       # print(self.rect)
-
     def reset(self):
         #self.rect.y = 0
         #self.rect.x = random.randrange(0, WIDTH - self.rect.width)
         self.rect.y = random.randrange(-100,-40)
-        self.speedy = random.randrange(1,3) 
+        self.speedy = random.randrange(1,3)
 
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, center, size):
+        pygame.sprite.Sprite.__init__(self)
+        self.size = size
+        self.image = explosion_anim[self.size][0]
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+        self.frame = 10
+        self.last_update = pygame.time.get_ticks()
+        self.frame_rate = 400
+
+    def update(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+            self.frame += 1
+            if self.frame == len(explosion_anim[self.size]):
+                self.kill()
+           # else:
+              #  center = self.rect.center
+                #self.image = explosion_anim[self.size][self.frame]
+               # self.rect = self.image.get_rect()
+               # self.rect.center = center
+                     
         
 #Load all game graphics
 background = pygame.image.load('img/bg.png').convert()
 background_rect = background.get_rect()
 player_img = pygame.image.load(path.join(img_dir, "cat3.png")).convert()
 attacker_img = pygame.image.load(path.join(img_dir, "fire1.png")).convert_alpha()
+
+### EXPLOSION SPRITE
+explosion_anim = {}
+explosion_anim['lg'] = []
+explosion_anim['sm'] = []
+for i in range(9):
+    filename = 'regularExplosion0{}.png'.format(i)
+    img = pygame.image.load(path.join(img_dir, filename)).convert()
+    img.set_colorkey(BLACK)
+    img_lg = pygame.transform.scale(img, (75,75))
+    explosion_anim['lg'].append(img_lg)
+    img_sm = pygame.transform.scale(img, (32,32))
+    explosion_anim['sm'].append(img_sm)
+
 
 
 # our group
@@ -208,12 +238,13 @@ while running:
         if event.type == move_event:
            
             attackers.update()
+            
 
         if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                  running = False
                  pygame.quit()
-                 print('escape')
+                 #print('escape')
                  sys.exit()
                  if event.type == pygame.QUIT:
                      running = False
@@ -225,10 +256,17 @@ while running:
     #check to see if an attacker hits the player
     collisions = pygame.sprite.spritecollide(player, attackers, False, pygame.sprite.collide_circle)
     if collisions:
-        #screen.blit(background, background_rect)
+        for collision in collisions:
+            expl = Explosion(collision.rect.center, 'lg')
+            all_sprites.add(expl)
+            pygame.display.update()
+           
+           
+
+
 
         
-
+        #screen.blit(background, background_rect)
         
         gameLives -= 1
 
@@ -237,19 +275,25 @@ while running:
             pygame.draw.rect(screen, BLUE, (210, 280, 320, 80))
             draw_text(screen, 'You died! You have' + ' ' + str(gameLives) + ' ' + 'lives remaining', 20, 375, 300)
             draw_text(screen, 'The game will restart in' + ' ' + str(3) + ' ' + 'seconds', 20, 380, 320)
-            hitsound.play()
+            #hitsound.play()
+
+                             
             for attacker in attackers:
                 attacker.reset()
-    
-        
+
+            
         if gameLives < 1:
                     pygame.draw.rect(screen, GREEN, (210, 280, 320, 80))
                     draw_text(screen, 'Game over! You Lost!', 20, 375, 300)
-                    goversound.play()
+                    #hitsound.play()
+                    pygame.time.wait(1000)
+                    #goversound.play()
                     pygame.mixer.music.pause()
                     pygame.display.update()
                     pygame.time.wait(3000)
                     #pygame.quit()
+ 
+                    print(expl)
 
         if score > topScore:
             topScore = score
@@ -261,8 +305,9 @@ while running:
         draw_text(screen, 'Lives:' + ' ' +str(gameLives), 18, WIDTH / 25, 50)
 
         pygame.display.update()
-        pygame.time.wait(3000)
+        #pygame.time.wait(3000)
         pygame.event.clear()
+        
 
         
         
