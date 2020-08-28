@@ -55,6 +55,8 @@ def draw_text(surf, text, size, x, y): #xy for location, size for how big
     text_rect.midtop = (x,y)
     surf.blit(text_surface, text_rect)
 
+
+
         # --- Making the Player + Movements ---
         
 class Player(pygame.sprite.Sprite): #Hero
@@ -166,6 +168,7 @@ class Explosion(pygame.sprite.Sprite):
                 center = self.rect.center
                 self.image = self.explosion_anim[self.ex_type][self.frame]
                 self.rect.center = center
+        
 
         
 #Load all game graphics
@@ -214,8 +217,9 @@ pygame.time.set_timer(move_event, move_side)
 
 score = 0
 topScore = 0
-variable = 1
-hope = False 
+#variable = 1
+hope = False
+
 #Game Loop
 
 running = True
@@ -247,28 +251,28 @@ while running:
     #Update
     player.update()
    # explosion.update()
-    rebirth = explosion.update()
+    ##rebirth = explosion.update()
     
 
     #check to see if an attacker hits the player
     
     collisions = pygame.sprite.spritecollide(player, attackers, False, pygame.sprite.collide_circle)
     #if collisions:
-    for hit in collisions:
-        expl = Explosion(hit.rect.center, 'large', explosion_anim)
-        explosion.add(expl)
-        all_sprites.add(expl)
+    #for hit in collisions:
+        ##expl = Explosion(hit.rect.center, 'large', explosion_anim)
+        ##explosion.add(expl)
+        ##all_sprites.add(expl)
 
     
-    print(len(explosion))
-    if collisions:
-        hope = True
-        pygame.event.clear()
+   # print(len(explosion))
+    ##if collisions:
+        ##hope = True
+        ##pygame.event.clear()
     if len(explosion) == 0 and hope == True:
-        hope = False 
-        print('hello')
-        pygame.event.pump()
-        pygame.time.wait(3000)
+        ##hope = False 
+        #print('hello')
+        #pygame.event.pump()
+        #pygame.time.wait(3000)
         
          #screen.blit(background, background_rect)
         
