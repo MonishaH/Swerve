@@ -32,10 +32,10 @@ pygame.display.set_caption("Swerve")
 clock = pygame.time.Clock()
 
 #Game Sounds
-hitsound = pygame.mixer.Sound('C:/Users/18622/Downloads/Cat Yelling In Fear-SoundBible.com-455973055.wav')
-goversound = pygame.mixer.Sound('C:/Users/18622/Downloads/GameOver.wav')
+hitsound = pygame.mixer.Sound('Cat Yelling In Fear-SoundBible.com-455973055.wav')
+goversound = pygame.mixer.Sound('GameOver.wav')
 
-music = pygame.mixer.music.load('C:/Users/18622/Desktop/bgsong.mp3')
+music = pygame.mixer.music.load('bgsong.mp3')
 pygame.mixer.music.play(loops=-1)
 
 
@@ -170,11 +170,11 @@ class Explosion(pygame.sprite.Sprite):
 
 def menu():
 
-    menumusic = pygame.mixer.music.load('C:/Users/18622/Downloads/Fun Background.mp3')
+    menumusic = pygame.mixer.music.load('Fun Background.mp3')
     pygame.mixer.music.play(loops=-1)
 
     #Background
-    background = pygame.image.load('C:/Users/18622/Desktop/SwerveGame/img/bbg.png').convert()
+    background = pygame.image.load('img/bbg.png').convert()
     background_rect = background.get_rect()
 
     #Extra Images for Screen
@@ -203,7 +203,7 @@ def menu():
 
     #Text for Screen 
     
-    image = pygame.image.load("C:/Users/18622/Downloads/Welcome-to-Swerve-.png").convert_alpha()
+    image = pygame.image.load("Welcome-to-Swerve-.png").convert_alpha()
     screen.blit(image, (70,40)) #right.left, up/down
 
     draw_text(screen, "This single player game is meant to be quick and easy.", 20, WIDTH/2, HEIGHT/5)
@@ -289,7 +289,7 @@ while running:
         menu()
         pygame.time.delay(0)
         pygame.mixer.music.fadeout(1000)
-        pygame.mixer.music.load('C:/Users/18622/Desktop/bgsong.mp3')
+        pygame.mixer.music.load('bgsong.mp3')
         pygame.mixer.music.play(-1)
         show_menu = False        
 
